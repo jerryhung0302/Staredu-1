@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { AppConfig, Course } from '../types';
 import { Plus, Trash2, Save, Image as ImageIcon, BookOpen, Tv, Layers, X, CheckCircle, AlertCircle, LogOut, Calendar, Info, Download } from 'lucide-react';
 import { formatImageUrl } from '../utils/imageUtils';
+import BrandLogo from '../components/BrandLogo';
 
 export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -195,11 +196,11 @@ export default function Admin() {
     return (
       <div className="min-h-[75vh] flex items-center justify-center px-4 py-12">
         <div className="max-w-md w-full bg-white rounded-3xl p-8 border border-slate-100 shadow-xl space-y-6">
-          <div className="text-center space-y-2">
-            <div className="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center mx-auto shadow-md shadow-amber-500/20">
-              <Layers className="w-6 h-6" />
+          <div className="text-center space-y-3">
+            <div className="flex justify-center">
+              <BrandLogo iconSize={48} textColor="text-slate-900" />
             </div>
-            <h2 className="text-2xl font-black text-slate-900">後台管理系統登入</h2>
+            <h2 className="text-xl font-bold text-slate-800">後台管理系統登入</h2>
             <p className="text-slate-500 text-xs">請輸入管理員通行密碼進入後台管理設定</p>
           </div>
 
@@ -252,9 +253,13 @@ export default function Admin() {
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-        <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">星育後台控制中心</h1>
-          <p className="text-slate-500 text-sm mt-1">管理首頁輪播圖、課程簡介 Banner，以及全站營隊與課程資料</p>
+        <div className="flex items-center gap-4">
+          <BrandLogo iconSize={52} textColor="text-slate-900" />
+          <div className="h-8 w-px bg-slate-200 hidden sm:block"></div>
+          <div>
+            <h1 className="text-xl font-bold text-slate-800 tracking-tight">後台控制中心</h1>
+            <p className="text-slate-500 text-xs mt-0.5">管理首頁輪播圖、課程簡介 Banner，以及全站營隊與課程資料</p>
+          </div>
         </div>
         <div className="flex items-center gap-3">
           <a

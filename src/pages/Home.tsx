@@ -109,44 +109,44 @@ export default function Home() {
 
       {/* Core Advantages */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-100 shadow-sm flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
               <Lightbulb className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-bold text-slate-900">啟發式 AI 教學</h3>
-              <p className="text-xs text-slate-500 mt-1">從應用出發，讓孩子學會把 AI 當成創作助手而非取代思考。</p>
+              <h3 className="text-[24px] font-bold text-slate-900 leading-snug">啟發式 AI 教學</h3>
+              <p className="text-[18px] text-slate-600 mt-2 leading-relaxed">從應用出發，讓孩子學會把 AI 當成創作助手而非取代思考。</p>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+          <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-100 shadow-sm flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
               <Award className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-bold text-slate-900">實戰作品產出</h3>
-              <p className="text-xs text-slate-500 mt-1">每堂課程皆能產出專屬手作、程式小遊戲或原創動畫繪本。</p>
+              <h3 className="text-[24px] font-bold text-slate-900 leading-snug">實戰作品產出</h3>
+              <p className="text-[18px] text-slate-600 mt-2 leading-relaxed">每堂課程皆能產出專屬手作、程式小遊戲或原創動畫繪本。</p>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+          <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-100 shadow-sm flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
               <HeartHandshake className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-bold text-slate-900">雙師小班制度</h3>
-              <p className="text-xs text-slate-500 mt-1">實體營隊每班配置專業講師與助教，全程細心關照學員進度。</p>
+              <h3 className="text-[24px] font-bold text-slate-900 leading-snug">雙師小班制度</h3>
+              <p className="text-[18px] text-slate-600 mt-2 leading-relaxed">實體營隊每班配置專業講師與助教，全程細心關照學員進度。</p>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+          <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-100 shadow-sm flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
               <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-bold text-slate-900">安心安全環境</h3>
-              <p className="text-xs text-slate-500 mt-1">高規格教學場地，配有專屬數位平台與家長課後學習反饋。</p>
+              <h3 className="text-[24px] font-bold text-slate-900 leading-snug">安心安全環境</h3>
+              <p className="text-[18px] text-slate-600 mt-2 leading-relaxed">高規格教學場地，配有專屬數位平台與家長課後學習反饋。</p>
             </div>
           </div>
         </div>

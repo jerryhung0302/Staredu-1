@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { Sparkles, Facebook, Instagram, Youtube, Download, Mail, Phone, MapPin } from 'lucide-react';
+import { Facebook, Instagram, Youtube, Download, Mail, Phone, MapPin } from 'lucide-react';
+import BrandLogo from './BrandLogo';
 
 export default function Footer() {
   return (
@@ -7,17 +8,9 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4 md:col-span-2">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center text-white">
-                <Sparkles className="w-5 h-5" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-lg font-black text-white leading-tight">星育有限公司</span>
-                <span className="text-[10px] font-bold tracking-widest text-amber-400 uppercase">STAREDU EDUCATION</span>
-              </div>
-            </div>
+            <BrandLogo iconSize={50} textColor="text-white" />
             <p className="text-slate-400 max-w-md leading-relaxed">
-              引領孩子探索 AI 與數位創意的起點。我們透過遊戲化教學、實體創客營隊與高互動線上課程，啟發每個孩子的潛能與科技想像力。
+              引領孩子開啟智慧理財與數位素養的第一步。透過生活化情境、趣味實作營隊與互動學習體驗，建立正確金錢觀念與未來競爭力。
             </p>
             <div className="flex space-x-4 pt-2">
               <a href="#" className="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-700 transition-colors">
@@ -71,7 +64,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} 星育有限公司 Staredu Education Co., Ltd. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} 小管家兒童理財. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-slate-400">服務條款</a>
             <a href="#" className="hover:text-slate-400">隱私權政策</a>

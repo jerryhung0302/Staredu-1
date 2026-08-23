@@ -64,7 +64,7 @@ export default function OnlineCourses() {
           <div className="space-y-2 text-left">
             <div className="flex items-center gap-2 text-amber-700 font-bold text-sm">
               <Zap className="w-4 h-4 fill-amber-500" />
-              <span>為什麼選擇星育線上訂閱？</span>
+              <span>為什麼選擇小管家兒童理財線上訂閱？</span>
             </div>
             <h3 className="text-xl sm:text-2xl font-black text-slate-900">
               每月自動續約，隨時可取消，享受無負擔的高品質科技教育

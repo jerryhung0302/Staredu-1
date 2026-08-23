@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Sparkles, MonitorPlay, Users, Settings } from 'lucide-react';
+import { Menu, X, MonitorPlay, Users, Settings } from 'lucide-react';
+import BrandLogo from './BrandLogo';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,18 +21,8 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center text-white shadow-md shadow-amber-500/20 group-hover:scale-105 transition-transform">
-                <Sparkles className="w-6 h-6" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-black tracking-tight text-slate-900 leading-tight">
-                  星育有限公司
-                </span>
-                <span className="text-[10px] font-bold tracking-widest text-amber-600 uppercase">
-                  STAREDU EDUCATION
-                </span>
-              </div>
+            <Link to="/" className="flex items-center group transition-transform hover:opacity-90 active:scale-98">
+              <BrandLogo iconSize={56} textColor="text-slate-900" />
             </Link>
           </div>
 
@@ -59,7 +50,7 @@ export default function Navbar() {
                 to="/online-courses"
                 className="px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-md shadow-orange-500/20 transition-all hover:shadow-lg active:scale-95"
               >
-                立即探索課程
+                會員中心
               </Link>
             </div>
           </div>
@@ -104,7 +95,7 @@ export default function Navbar() {
               onClick={() => setIsOpen(false)}
               className="block text-center w-full px-5 py-3 rounded-xl text-base font-bold text-white bg-linear-to-r from-amber-500 to-orange-500 shadow-md shadow-orange-500/20"
             >
-              立即探索課程
+              會員中心
             </Link>
           </div>
         </div>
