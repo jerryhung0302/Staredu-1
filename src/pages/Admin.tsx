@@ -21,8 +21,11 @@ export default function Admin() {
 
   const [courses, setCourses] = useState<Course[]>([]);
   const [editingCourse, setEditingCourse] = useState<Partial<Course> | null>(null);
+  const [tagInput, setTagInput] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'banners' | 'physical' | 'online'>('banners');
+  const [isSavingConfig, setIsSavingConfig] = useState(false);
+  const [isSavingCourse, setIsSavingCourse] = useState(false);
 
   const [toastMessage, setToastMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
@@ -43,7 +46,7 @@ export default function Admin() {
     setToastMessage({ type, text });
     setTimeout(() => {
       setToastMessage(null);
-    }, 3000);
+    }, 3500);
   };
 
   const fetchData = async () => {
@@ -52,26 +55,31 @@ export default function Admin() {
         fetch('/api/config'),
         fetch('/api/courses')
       ]);
+
+      if (!configRes.ok || !coursesRes.ok) {
+        throw new Error('API 回應異常');
+      }
+
       const configData = await configRes.json();
       const coursesData = await coursesRes.json();
 
-      const rawHomeBanners = configData.homeBanners || [];
+      const rawHomeBanners = Array.isArray(configData?.homeBanners) ? configData.homeBanners : [];
       const parsedHomeBanners: BannerItem[] = rawHomeBanners.map((b: any) => {
         if (typeof b === 'string') {
-          return { image: b, linkUrl: '' };
+          return { image: b || '', linkUrl: '' };
         }
         return { image: b?.image || '', linkUrl: b?.linkUrl || '' };
       });
 
       setConfig({
         homeBanners: parsedHomeBanners.length ? parsedHomeBanners : [{ image: '', linkUrl: '' }],
-        physicalBanner: configData.physicalBanner || '',
-        onlineBanner: configData.onlineBanner || ''
+        physicalBanner: configData?.physicalBanner || '',
+        onlineBanner: configData?.onlineBanner || ''
       });
-      setCourses(coursesData);
+      setCourses(Array.isArray(coursesData) ? coursesData : []);
     } catch (err) {
-      console.error(err);
-      showToast('資料載入失敗', 'error');
+      console.error('Fetch error in Admin:', err);
+      showToast('資料載入失敗，請確認後端服務是否正常', 'error');
     }
   };
 
@@ -94,16 +102,23 @@ export default function Admin() {
 
   const handleSaveConfig = async () => {
     try {
-      const cleanBanners = config.homeBanners
-        .map((b) => ({
-          image: b.image.trim(),
-          linkUrl: (b.linkUrl || '').trim()
-        }))
+      setIsSavingConfig(true);
+      const cleanBanners = (config.homeBanners || [])
+        .map((b: any) => {
+          if (typeof b === 'string') {
+            return { image: b.trim(), linkUrl: '' };
+          }
+          return {
+            image: String(b?.image || '').trim(),
+            linkUrl: String(b?.linkUrl || '').trim()
+          };
+        })
         .filter((b) => b.image !== '');
 
       const payload = {
-        ...config,
-        homeBanners: cleanBanners.length ? cleanBanners : [{ image: '', linkUrl: '' }]
+        homeBanners: cleanBanners.length ? cleanBanners : [{ image: '', linkUrl: '' }],
+        physicalBanner: String(config.physicalBanner || '').trim(),
+        onlineBanner: String(config.onlineBanner || '').trim()
       };
 
       const res = await fetch('/api/config', {
@@ -111,27 +126,31 @@ export default function Admin() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
+
       if (res.ok) {
-        showToast('Banner 與跳轉連結設定儲存成功！');
-        fetchData();
+        showToast('首頁橫幅與前往連結已成功儲存！');
+        await fetchData();
       } else {
-        showToast('儲存失敗', 'error');
+        const errData = await res.json().catch(() => ({}));
+        showToast(errData.error || '儲存失敗，請重試', 'error');
       }
-    } catch (err) {
-      console.error(err);
-      showToast('儲存時發生錯誤', 'error');
+    } catch (err: any) {
+      console.error('Save config error:', err);
+      showToast(err?.message || '儲存時發生網路錯誤', 'error');
+    } finally {
+      setIsSavingConfig(false);
     }
   };
 
   const handleHomeBannerImageChange = (index: number, image: string) => {
     const next = [...config.homeBanners];
-    next[index] = { ...next[index], image };
+    next[index] = { ...(next[index] || { image: '', linkUrl: '' }), image };
     setConfig({ ...config, homeBanners: next });
   };
 
   const handleHomeBannerLinkChange = (index: number, linkUrl: string) => {
     const next = [...config.homeBanners];
-    next[index] = { ...next[index], linkUrl };
+    next[index] = { ...(next[index] || { image: '', linkUrl: '' }), linkUrl };
     setConfig({ ...config, homeBanners: next });
   };
 
@@ -146,33 +165,67 @@ export default function Admin() {
 
   const handleSaveCourse = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingCourse?.title || !editingCourse?.category || editingCourse?.price === undefined) {
-      showToast('請完整填寫標題、分類與價格', 'error');
+    if (!editingCourse) return;
+    if (!editingCourse.title?.trim()) {
+      showToast('請填寫課程標題', 'error');
+      return;
+    }
+    if (!editingCourse.category?.trim()) {
+      showToast('請填寫分類標籤', 'error');
+      return;
+    }
+    if (editingCourse.price === undefined || isNaN(Number(editingCourse.price))) {
+      showToast('請填寫有效的價格數值', 'error');
       return;
     }
 
     try {
+      setIsSavingCourse(true);
       const isNew = !editingCourse.id;
       const url = isNew ? '/api/courses' : `/api/courses/${editingCourse.id}`;
       const method = isNew ? 'POST' : 'PUT';
 
+      const parsedTags = tagInput
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      const payload = {
+        ...editingCourse,
+        title: editingCourse.title.trim(),
+        category: editingCourse.category.trim(),
+        price: Number(editingCourse.price) || 0,
+        description: (editingCourse.description || '').trim(),
+        image: (editingCourse.image || '').trim(),
+        tags: parsedTags,
+        duration: (editingCourse.duration || '').trim(),
+        location: (editingCourse.location || '').trim(),
+        details: (editingCourse.details || '').trim(),
+        startDate: editingCourse.startDate || '',
+        endDate: editingCourse.endDate || ''
+      };
+
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editingCourse)
+        body: JSON.stringify(payload)
       });
 
       if (res.ok) {
         showToast(isNew ? '成功新增課程！' : '成功更新課程！');
         setIsModalOpen(false);
         setEditingCourse(null);
-        fetchData();
+        setTagInput('');
+        await fetchData();
       } else {
-        showToast('儲存失敗', 'error');
+        const errData = await res.json().catch(() => ({}));
+        showToast(errData.error || '儲存課程失敗', 'error');
       }
-    } catch (err) {
-      console.error(err);
-      showToast('儲存發生錯誤', 'error');
+    } catch (err: any) {
+      console.error('Save course error:', err);
+      showToast(err?.message || '儲存發生錯誤', 'error');
+    } finally {
+      setIsSavingCourse(false);
     }
   };
 
@@ -183,9 +236,10 @@ export default function Admin() {
       const res = await fetch(`/api/courses/${id}`, { method: 'DELETE' });
       if (res.ok) {
         showToast('課程已刪除');
-        fetchData();
+        await fetchData();
       } else {
-        showToast('刪除失敗', 'error');
+        const errData = await res.json().catch(() => ({}));
+        showToast(errData.error || '刪除失敗', 'error');
       }
     } catch (err) {
       console.error(err);
@@ -194,25 +248,28 @@ export default function Admin() {
   };
 
   const openAddModal = (type: 'physical' | 'online') => {
+    const defaultTags = type === 'physical' ? ['理財啟蒙', '情境桌遊', '小學 1-6 年級'] : ['每月扣款', '隨時觀看', '課後任務'];
     setEditingCourse({
       type,
       title: '',
-      category: type === 'physical' ? '冬令營 / 營隊' : '線上訂閱',
+      category: type === 'physical' ? '冬令營 / 實體活動' : '線上訂閱',
       price: type === 'physical' ? 8800 : 599,
       description: '',
-      image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800',
-      tags: type === 'physical' ? ['AI 實作', '小學 1-6 年級'] : ['每月扣款', '隨時觀看'],
-      duration: type === 'physical' ? '5 天全日營' : '每月 4 堂影音 + 實作回饋',
+      image: 'https://images.unsplash.com/photo-1579621970588-a35d0e7ab9b6?auto=format&fit=crop&q=80&w=800',
+      tags: defaultTags,
+      duration: type === 'physical' ? '5 天全日營' : '每月 4 堂影音 + 生活實踐任務',
       location: type === 'physical' ? '台北市大安區教育中心' : '',
       details: '',
       startDate: '',
       endDate: ''
     });
+    setTagInput(defaultTags.join(', '));
     setIsModalOpen(true);
   };
 
   const openEditModal = (course: Course) => {
     setEditingCourse({ ...course });
+    setTagInput(Array.isArray(course.tags) ? course.tags.join(', ') : (course.tags || ''));
     setIsModalOpen(true);
   };
 
@@ -487,9 +544,10 @@ export default function Admin() {
           <div className="flex justify-end">
             <button
               onClick={handleSaveConfig}
-              className="flex items-center gap-2 px-8 py-3.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-bold rounded-xl text-sm transition-all shadow-md shadow-amber-500/20"
+              disabled={isSavingConfig}
+              className="flex items-center gap-2 px-8 py-3.5 bg-amber-500 hover:bg-amber-600 active:scale-95 disabled:opacity-50 disabled:pointer-events-none text-white font-bold rounded-xl text-sm transition-all shadow-md shadow-amber-500/20 cursor-pointer"
             >
-              <Save className="w-4 h-4" /> 儲存所有橫幅設定
+              <Save className="w-4 h-4" /> {isSavingConfig ? '儲存中...' : '儲存所有橫幅設定'}
             </button>
           </div>
         </div>
@@ -759,9 +817,9 @@ export default function Admin() {
                 <label className="block text-xs font-bold text-slate-700 mb-1">標籤 (以逗號分隔)</label>
                 <input
                   type="text"
-                  value={Array.isArray(editingCourse.tags) ? editingCourse.tags.join(', ') : (editingCourse.tags || '')}
-                  onChange={(e) => setEditingCourse({ ...editingCourse, tags: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
-                  placeholder="例：AI 啟蒙, 機器人, 小學 1-6 年級"
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  placeholder="例：理財啟蒙, 情境桌遊, 小學 1-6 年級"
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
                 />
               </div>
@@ -787,9 +845,11 @@ export default function Admin() {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-amber-500 hover:bg-amber-600 shadow-md shadow-amber-500/20 transition-all active:scale-95"
+                  disabled={isSavingCourse}
+                  className="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-amber-500 hover:bg-amber-600 shadow-md shadow-amber-500/20 transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center gap-2 cursor-pointer"
                 >
-                  儲存課程
+                  <Save className="w-4 h-4" />
+                  {isSavingCourse ? '儲存中...' : '儲存課程'}
                 </button>
               </div>
             </form>

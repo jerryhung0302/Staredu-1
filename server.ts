@@ -173,88 +173,121 @@ async function startServer() {
   });
 
   app.get("/api/config", (req, res) => {
-    res.json(db.config);
+    try {
+      res.json(db.config);
+    } catch (err: any) {
+      res.status(500).json({ error: "Failed to load config" });
+    }
   });
 
   app.post("/api/config", (req, res) => {
-    const { homeBanners, physicalBanner, onlineBanner } = req.body;
-    if (homeBanners) db.config.homeBanners = homeBanners;
-    if (physicalBanner) db.config.physicalBanner = physicalBanner;
-    if (onlineBanner) db.config.onlineBanner = onlineBanner;
-    saveDb();
-    res.json({ success: true, config: db.config });
+    try {
+      const { homeBanners, physicalBanner, onlineBanner } = req.body;
+      if (homeBanners !== undefined) db.config.homeBanners = homeBanners;
+      if (physicalBanner !== undefined) db.config.physicalBanner = physicalBanner;
+      if (onlineBanner !== undefined) db.config.onlineBanner = onlineBanner;
+      saveDb();
+      res.json({ success: true, config: db.config });
+    } catch (err: any) {
+      console.error("Config save error:", err);
+      res.status(500).json({ error: err?.message || "Failed to save configuration" });
+    }
   });
 
   app.get("/api/courses", (req, res) => {
-    const { type } = req.query;
-    if (type) {
-      const filtered = db.courses.filter(c => c.type === type);
-      return res.json(filtered);
+    try {
+      const { type } = req.query;
+      if (type) {
+        const filtered = db.courses.filter(c => c.type === type);
+        return res.json(filtered);
+      }
+      res.json(db.courses);
+    } catch (err: any) {
+      res.status(500).json({ error: "Failed to load courses" });
     }
-    res.json(db.courses);
   });
 
   app.get("/api/courses/:id", (req, res) => {
-    const course = db.courses.find(c => c.id === req.params.id);
-    if (course) {
-      res.json(course);
-    } else {
-      res.status(404).json({ error: "Course not found" });
+    try {
+      const course = db.courses.find(c => c.id === req.params.id);
+      if (course) {
+        res.json(course);
+      } else {
+        res.status(404).json({ error: "Course not found" });
+      }
+    } catch (err: any) {
+      res.status(500).json({ error: "Failed to load course" });
     }
   });
 
   app.post("/api/courses", (req, res) => {
-    const { title, type, category, price, description, image, tags, location, duration, details, startDate, endDate } = req.body;
-    const newCourse = {
-      id: `${type === 'physical' ? 'phy' : 'on'}-${Date.now()}`,
-      title,
-      type,
-      category,
-      price: Number(price),
-      description,
-      image,
-      tags: Array.isArray(tags) ? tags : (tags ? tags.split(",").map((t: string) => t.trim()) : []),
-      location: location || '',
-      duration: duration || '',
-      details: details || '',
-      startDate: startDate || '',
-      endDate: endDate || ''
-    };
-    db.courses.push(newCourse);
-    saveDb();
-    res.json({ success: true, course: newCourse });
+    try {
+      const { title, type, category, price, description, image, tags, location, duration, details, startDate, endDate } = req.body;
+      const newCourse = {
+        id: `${type === 'physical' ? 'phy' : 'on'}-${Date.now()}`,
+        title: title || '',
+        type: type || 'physical',
+        category: category || '',
+        price: Number(price) || 0,
+        description: description || '',
+        image: image || '',
+        tags: Array.isArray(tags) ? tags : (tags ? tags.split(",").map((t: string) => t.trim()).filter(Boolean) : []),
+        location: location || '',
+        duration: duration || '',
+        details: details || '',
+        startDate: startDate || '',
+        endDate: endDate || ''
+      };
+      db.courses.push(newCourse);
+      saveDb();
+      res.json({ success: true, course: newCourse });
+    } catch (err: any) {
+      console.error("Course create error:", err);
+      res.status(500).json({ error: err?.message || "Failed to create course" });
+    }
   });
 
   app.put("/api/courses/:id", (req, res) => {
-    const { title, category, price, description, image, tags, location, duration, details, startDate, endDate } = req.body;
-    const course = db.courses.find(c => c.id === req.params.id);
-    if (course) {
-      if (title !== undefined) course.title = title;
-      if (category !== undefined) course.category = category;
-      if (price !== undefined) course.price = Number(price);
-      if (description !== undefined) course.description = description;
-      if (image !== undefined) course.image = image;
-      if (tags !== undefined) course.tags = Array.isArray(tags) ? tags : tags.split(",").map((t: string) => t.trim());
-      if (location !== undefined) course.location = location;
-      if (duration !== undefined) course.duration = duration;
-      if (details !== undefined) course.details = details;
-      if (startDate !== undefined) course.startDate = startDate;
-      if (endDate !== undefined) course.endDate = endDate;
-      saveDb();
-      res.json({ success: true, course });
-    } else {
-      res.status(404).json({ error: "Course not found" });
+    try {
+      const { title, type, category, price, description, image, tags, location, duration, details, startDate, endDate } = req.body;
+      const course = db.courses.find(c => c.id === req.params.id);
+      if (course) {
+        if (title !== undefined) course.title = title;
+        if (type !== undefined) course.type = type;
+        if (category !== undefined) course.category = category;
+        if (price !== undefined) course.price = Number(price) || 0;
+        if (description !== undefined) course.description = description;
+        if (image !== undefined) course.image = image;
+        if (tags !== undefined) course.tags = Array.isArray(tags) ? tags : tags.split(",").map((t: string) => t.trim()).filter(Boolean);
+        if (location !== undefined) course.location = location;
+        if (duration !== undefined) course.duration = duration;
+        if (details !== undefined) course.details = details;
+        if (startDate !== undefined) course.startDate = startDate;
+        if (endDate !== undefined) course.endDate = endDate;
+        saveDb();
+        res.json({ success: true, course });
+      } else {
+        res.status(404).json({ error: "Course not found" });
+      }
+    } catch (err: any) {
+      console.error("Course update error:", err);
+      res.status(500).json({ error: err?.message || "Failed to update course" });
     }
   });
 
   app.delete("/api/courses/:id", (req, res) => {
-    const index = db.courses.findIndex(c => c.id === req.params.id);
-    if (index !== -1) {
-      const removed = db.courses.splice(index, 1);
-      saveDb();
-      res.json({ success: true, course: removed[0] });
-    } else {
-      res.status(404).json({ error: "Course not found" });
+    try {
+      const index = db.courses.findIndex(c => c.id === req.params.id);
+      if (index !== -1) {
+        const removed = db.courses.splice(index, 1);
+        saveDb();
+        res.json({ success: true, course: removed[0] });
+      } else {
+        res.status(404).json({ error: "Course not found" });
+      }
+    } catch (err: any) {
+      console.error("Course delete error:", err);
+      res.status(500).json({ error: err?.message || "Failed to delete course" });
     }
   });
 
