@@ -15,8 +15,13 @@ export interface Course {
   endDate?: string;
 }
 
+export interface BannerItem {
+  image: string;
+  linkUrl?: string;
+}
+
 export interface AppConfig {
-  homeBanners: string[];
+  homeBanners: (string | BannerItem)[];
   physicalBanner: string;
   onlineBanner: string;
 }

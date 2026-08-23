@@ -1,9 +1,18 @@
 {
   "config": {
     "homeBanners": [
-      "https://images.unsplash.com/photo-1579621970588-a35d0e7ab9b6?auto=format&fit=crop&q=80&w=1600",
-      "https://www.anuefund.com/Upload/Files/IndexBanner/Ad/1903x530_pc_20250730093235973021.jpg",
-      "https://drive.google.com/file/d/1gEneP9TbpPKy79uIbRj-45UhDvSDVOM7/view?usp=drive_link"
+      {
+        "image": "https://images.unsplash.com/photo-1579621970588-a35d0e7ab9b6?auto=format&fit=crop&q=80&w=1600",
+        "linkUrl": "/physical-courses"
+      },
+      {
+        "image": "https://www.anuefund.com/Upload/Files/IndexBanner/Ad/1903x530_pc_20250730093235973021.jpg",
+        "linkUrl": "/online-courses"
+      },
+      {
+        "image": "https://drive.google.com/file/d/1gEneP9TbpPKy79uIbRj-45UhDvSDVOM7/view?usp=drive_link",
+        "linkUrl": "/physical-courses"
+      }
     ],
     "physicalBanner": "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=1600",
     "onlineBanner": "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?auto=format&fit=crop&q=80&w=1600"

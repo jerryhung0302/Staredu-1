@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { AppConfig, Course } from '../types';
-import { Plus, Trash2, Save, Image as ImageIcon, BookOpen, Tv, Layers, X, CheckCircle, AlertCircle, LogOut, Calendar, Info, Download } from 'lucide-react';
+import { AppConfig, BannerItem, Course } from '../types';
+import { Plus, Trash2, Save, Image as ImageIcon, BookOpen, Tv, Layers, X, CheckCircle, AlertCircle, LogOut, Calendar, Info, Download, ExternalLink, Link2 } from 'lucide-react';
 import { formatImageUrl } from '../utils/imageUtils';
 import BrandLogo from '../components/BrandLogo';
 
@@ -9,8 +9,12 @@ export default function Admin() {
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState('');
 
-  const [config, setConfig] = useState<AppConfig>({
-    homeBanners: [''],
+  const [config, setConfig] = useState<{
+    homeBanners: BannerItem[];
+    physicalBanner: string;
+    onlineBanner: string;
+  }>({
+    homeBanners: [{ image: '', linkUrl: '' }],
     physicalBanner: '',
     onlineBanner: ''
   });
@@ -51,8 +55,16 @@ export default function Admin() {
       const configData = await configRes.json();
       const coursesData = await coursesRes.json();
 
+      const rawHomeBanners = configData.homeBanners || [];
+      const parsedHomeBanners: BannerItem[] = rawHomeBanners.map((b: any) => {
+        if (typeof b === 'string') {
+          return { image: b, linkUrl: '' };
+        }
+        return { image: b?.image || '', linkUrl: b?.linkUrl || '' };
+      });
+
       setConfig({
-        homeBanners: configData.homeBanners?.length ? configData.homeBanners : [''],
+        homeBanners: parsedHomeBanners.length ? parsedHomeBanners : [{ image: '', linkUrl: '' }],
         physicalBanner: configData.physicalBanner || '',
         onlineBanner: configData.onlineBanner || ''
       });
@@ -82,10 +94,16 @@ export default function Admin() {
 
   const handleSaveConfig = async () => {
     try {
-      const cleanBanners = config.homeBanners.map(b => b.trim()).filter(Boolean);
+      const cleanBanners = config.homeBanners
+        .map((b) => ({
+          image: b.image.trim(),
+          linkUrl: (b.linkUrl || '').trim()
+        }))
+        .filter((b) => b.image !== '');
+
       const payload = {
         ...config,
-        homeBanners: cleanBanners.length ? cleanBanners : ['']
+        homeBanners: cleanBanners.length ? cleanBanners : [{ image: '', linkUrl: '' }]
       };
 
       const res = await fetch('/api/config', {
@@ -94,7 +112,7 @@ export default function Admin() {
         body: JSON.stringify(payload)
       });
       if (res.ok) {
-        showToast('Banner 設定儲存成功！');
+        showToast('Banner 與跳轉連結設定儲存成功！');
         fetchData();
       } else {
         showToast('儲存失敗', 'error');
@@ -105,19 +123,25 @@ export default function Admin() {
     }
   };
 
-  const handleHomeBannerChange = (index: number, value: string) => {
+  const handleHomeBannerImageChange = (index: number, image: string) => {
     const next = [...config.homeBanners];
-    next[index] = value;
+    next[index] = { ...next[index], image };
+    setConfig({ ...config, homeBanners: next });
+  };
+
+  const handleHomeBannerLinkChange = (index: number, linkUrl: string) => {
+    const next = [...config.homeBanners];
+    next[index] = { ...next[index], linkUrl };
     setConfig({ ...config, homeBanners: next });
   };
 
   const handleAddHomeBanner = () => {
-    setConfig({ ...config, homeBanners: [...config.homeBanners, ''] });
+    setConfig({ ...config, homeBanners: [...config.homeBanners, { image: '', linkUrl: '' }] });
   };
 
   const handleRemoveHomeBanner = (index: number) => {
     const next = config.homeBanners.filter((_, i) => i !== index);
-    setConfig({ ...config, homeBanners: next.length ? next : [''] });
+    setConfig({ ...config, homeBanners: next.length ? next : [{ image: '', linkUrl: '' }] });
   };
 
   const handleSaveCourse = async (e: React.FormEvent) => {
@@ -331,33 +355,85 @@ export default function Admin() {
             </div>
 
             <div className="space-y-4">
-              {config.homeBanners.map((url, idx) => (
-                <div key={idx} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                  <span className="text-xs font-black text-slate-400 w-6">#{idx + 1}</span>
-                  <div className="w-24 h-14 rounded-lg bg-slate-200 overflow-hidden shrink-0">
-                    <img
-                      src={formatImageUrl(url)}
-                      alt={`Banner preview ${idx + 1}`}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://placehold.co/600x300?text=無效圖片網址';
-                      }}
-                    />
+              {config.homeBanners.map((banner, idx) => (
+                <div key={idx} className="p-4 sm:p-5 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black px-2.5 py-1 bg-amber-100 text-amber-800 rounded-lg">
+                      輪播圖 #{idx + 1}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveHomeBanner(idx)}
+                      className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-1 text-xs font-medium"
+                      title="刪除這張輪播圖"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      <span className="hidden sm:inline">刪除</span>
+                    </button>
                   </div>
-                  <input
-                    type="text"
-                    value={url}
-                    onChange={(e) => handleHomeBannerChange(idx, e.target.value)}
-                    placeholder="請貼上圖片 URL 或 Google 雲端硬碟公開分享連結"
-                    className="flex-grow w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 bg-white"
-                  />
-                  <button
-                    onClick={() => handleRemoveHomeBanner(idx)}
-                    className="p-2 text-slate-400 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50 self-end sm:self-center"
-                    title="刪除這張圖片"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+
+                  <div className="flex flex-col md:flex-row gap-4 items-start">
+                    {/* Preview Thumbnail */}
+                    <div className="w-full md:w-36 aspect-21/9 md:aspect-video rounded-xl bg-slate-200 overflow-hidden shrink-0 border border-slate-200 flex items-center justify-center relative">
+                      {banner.image ? (
+                        <img
+                          src={formatImageUrl(banner.image)}
+                          alt={`Banner preview ${idx + 1}`}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://placehold.co/600x300?text=無效圖片網址';
+                          }}
+                        />
+                      ) : (
+                        <div className="text-[11px] text-slate-400 text-center px-2">尚未輸入圖片網址</div>
+                      )}
+                    </div>
+
+                    {/* Inputs for Image URL and Goto Link */}
+                    <div className="flex-1 w-full space-y-3">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1.5">
+                          <ImageIcon className="w-3.5 h-3.5 text-amber-600" />
+                          <span>圖片網址 (Image URL)</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={banner.image}
+                          onChange={(e) => handleHomeBannerImageChange(idx, e.target.value)}
+                          placeholder="請貼上圖片網址或 Google 雲端硬碟公開分享連結"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
+                          <span className="flex items-center gap-1.5">
+                            <Link2 className="w-3.5 h-3.5 text-orange-600" />
+                            <span>前往連結 (Goto Link)</span>
+                            <span className="text-[11px] font-normal text-slate-400">（點擊 Banner 後跳轉目標，如非必填可留空）</span>
+                          </span>
+                          {banner.linkUrl && (
+                            <a
+                              href={banner.linkUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[11px] font-semibold text-amber-600 hover:text-amber-700 hover:underline flex items-center gap-1"
+                            >
+                              <span>測試連結</span>
+                              <ExternalLink className="w-3 h-3" />
+                            </a>
+                          )}
+                        </label>
+                        <input
+                          type="text"
+                          value={banner.linkUrl || ''}
+                          onChange={(e) => handleHomeBannerLinkChange(idx, e.target.value)}
+                          placeholder="例：/physical-courses 或 /online-courses 或外部連結 https://..."
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 bg-white"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>

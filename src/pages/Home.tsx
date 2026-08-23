@@ -22,9 +22,16 @@ export default function Home() {
       .catch(console.error);
   }, []);
 
-  const banners = config?.homeBanners?.length
+  const rawBanners = config?.homeBanners?.length
     ? config.homeBanners
     : ['https://images.unsplash.com/photo-1579621970588-a35d0e7ab9b6?auto=format&fit=crop&q=80&w=1600'];
+
+  const banners = rawBanners.map((b) => {
+    if (typeof b === 'string') {
+      return { image: b, linkUrl: '' };
+    }
+    return { image: b?.image || '', linkUrl: b?.linkUrl || '' };
+  });
 
   useEffect(() => {
     if (banners.length <= 1) return;
@@ -32,7 +39,7 @@ export default function Home() {
       setCurrentBannerIdx((prev) => (prev + 1) % banners.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, [banners]);
+  }, [banners.length]);
 
   const physicalCourses = courses.filter((c) => c.type === 'physical');
   const onlineCourses = courses.filter((c) => c.type === 'online');
@@ -41,20 +48,51 @@ export default function Home() {
     <div className="space-y-16 pb-20">
       {/* Hero Carousel */}
       <div className="relative w-full aspect-21/9 md:aspect-24/9 max-h-[520px] overflow-hidden bg-slate-900 shadow-lg">
-        {banners.map((imgUrl, idx) => (
-          <div
-            key={idx}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              idx === currentBannerIdx ? 'opacity-100' : 'opacity-0 pointer-events-none'
-            }`}
-          >
+        {banners.map((banner, idx) => {
+          const isExternal = banner.linkUrl?.startsWith('http://') || banner.linkUrl?.startsWith('https://');
+          const hasLink = Boolean(banner.linkUrl?.trim());
+
+          const imageContent = (
             <img
-              src={formatImageUrl(imgUrl)}
+              src={formatImageUrl(banner.image)}
               alt={`Banner ${idx + 1}`}
-              className="w-full h-full object-cover object-center"
+              className="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-[1.01]"
             />
-          </div>
-        ))}
+          );
+
+          return (
+            <div
+              key={idx}
+              className={`absolute inset-0 transition-opacity duration-1000 ${
+                idx === currentBannerIdx ? 'opacity-100' : 'opacity-0 pointer-events-none'
+              }`}
+            >
+              {hasLink ? (
+                isExternal ? (
+                  <a
+                    href={banner.linkUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-full h-full cursor-pointer"
+                    title={`前往連結：${banner.linkUrl}`}
+                  >
+                    {imageContent}
+                  </a>
+                ) : (
+                  <Link
+                    to={banner.linkUrl!}
+                    className="block w-full h-full cursor-pointer"
+                    title={`前往頁面：${banner.linkUrl}`}
+                  >
+                    {imageContent}
+                  </Link>
+                )
+              ) : (
+                imageContent
+              )}
+            </div>
+          );
+        })}
 
         {/* Carousel Controls */}
         {banners.length > 1 && (
