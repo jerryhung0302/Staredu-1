@@ -34,8 +34,8 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [banners]);
 
-  const physicalCourses = courses.filter((c) => c.type === 'physical').slice(0, 3);
-  const onlineCourses = courses.filter((c) => c.type === 'online').slice(0, 3);
+  const physicalCourses = courses.filter((c) => c.type === 'physical');
+  const onlineCourses = courses.filter((c) => c.type === 'online');
 
   return (
     <div className="space-y-16 pb-20">
@@ -97,8 +97,8 @@ export default function Home() {
               <Lightbulb className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-[24px] font-bold text-slate-900 leading-snug">啟發式 AI 教學</h3>
-              <p className="text-[18px] text-slate-600 mt-2 leading-relaxed">從應用出發，讓孩子學會把 AI 當成創作助手而非取代思考。</p>
+              <h3 className="text-[24px] font-bold text-slate-900 leading-snug">生活化理財教學</h3>
+              <p className="text-[18px] text-slate-600 mt-2 leading-relaxed">從日常生活情境出發，讓孩子學會分辨想要與需要，建立自律金錢觀念。</p>
             </div>
           </div>
 
@@ -107,8 +107,8 @@ export default function Home() {
               <Award className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-[24px] font-bold text-slate-900 leading-snug">實戰作品產出</h3>
-              <p className="text-[18px] text-slate-600 mt-2 leading-relaxed">每堂課程皆能產出專屬手作、程式小遊戲或原創動畫繪本。</p>
+              <h3 className="text-[24px] font-bold text-slate-900 leading-snug">實戰作品與成果產出</h3>
+              <p className="text-[18px] text-slate-600 mt-2 leading-relaxed">每堂課程皆能產出專屬手作帳本、創意商業提案或理財桌遊實踐體驗。</p>
             </div>
           </div>
 

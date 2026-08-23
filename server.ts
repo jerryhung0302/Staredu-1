@@ -34,56 +34,56 @@ const defaultDb = {
     {
       id: "phy-1",
       type: "physical",
-      title: "【寒假營隊】AI 小小程式設計師與機器人創客營",
+      title: "【寒假營隊】小小巴菲特兒童理財創客營",
       category: "冬令營 / 實體活動",
-      price: 9800,
-      description: "透過圖像化積木與 AI 工具，引導孩子親手組裝機器人，培養邏輯思維與運算思維。",
-      image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800",
-      tags: ["AI 啟蒙", "機器人", "小學 1-6 年級"],
+      price: 8800,
+      description: "透過情境模擬桌遊、實體貨幣交易與零用錢規劃，引導孩子建立正確金錢觀念與儲蓄思維。",
+      image: "https://images.unsplash.com/photo-1579621970588-a35d0e7ab9b6?auto=format&fit=crop&q=80&w=800",
+      tags: ["理財啟蒙", "情境桌遊", "小學 1-6 年級"],
       location: "台北市大安區教育中心",
       duration: "5 天全日營",
       startDate: "2025-01-20",
       endDate: "2025-01-24",
-      details: "本課程旨在帶領學童建立運算思維，透過互動遊戲、實體積木機器人組裝及基礎 AI 提示語設計，激發創意思維。"
+      details: "專為國教學童設計的生活化理財營隊，藉由「虛擬小小社會體驗」、「日常記帳手作帳本」及「理性消費大挑戰」，讓孩子在趣味互動中學會珍惜資源、分辨「需要」與「想要」，培養受用一生的財務素養。"
     },
     {
       id: "phy-2",
       type: "physical",
-      title: "【週末實體】創意 AI 繪圖與定格動畫工作坊",
+      title: "【週末實體】小小創業家商業探索與拍賣工作坊",
       category: "週末常態班",
-      price: 4500,
-      description: "讓孩子學習用 AI 工具生成故事角色，並結合手作與黏土製作屬於自己的微電影定格動畫。",
-      image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&q=80&w=800",
-      tags: ["AI 繪圖", "動畫製作", "創意美學"],
+      price: 4200,
+      description: "讓孩子學習商品定價、成本概念與行銷拍賣，動手設計攤位，體驗真實商業運作樂趣。",
+      image: "https://images.unsplash.com/photo-1556742049-0a67e5572293?auto=format&fit=crop&q=80&w=800",
+      tags: ["商業思維", "拍賣實戰", "創意美學"],
       location: "新北市板橋教室",
       duration: "4 週（每週六上午）",
       startDate: "2025-03-01",
       endDate: "2025-03-22",
-      details: "融合科技與美術，教導小朋友如何正確運用 AI 圖像生成激發靈感，並動手捏製角色完成故事分鏡與動畫短片。"
+      details: "融合數學應用與商業啟蒙，教導小朋友認識成本與利潤、規劃商品行銷策略，並親自主持創意拍賣會，提升口語表達與團隊協作能力。"
     },
     {
       id: "on-1",
       type: "online",
-      title: "【線上月訂閱】孩子的第一堂 AI 創意故事寫作課",
+      title: "【線上月訂閱】生活中的金錢魔法：兒童理財素養課",
       category: "線上訂閱",
       price: 599,
-      description: "每週解鎖全新主題，引導孩子與 AI 共同創作奇幻故事、漫畫分鏡，提升寫作表達力！",
-      image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=800",
-      tags: ["每月扣款", "隨時觀看", "作業批改"],
-      duration: "每月 4 堂影音 + 實作回饋",
-      details: "專為國小與國中生設計的 AI 輔助寫作課，包含寫作結構、詞彙聯想、AI 引導角色對話等，每堂課皆有專業助教批改與回饋。"
+      description: "每週解鎖全新趣味理財動畫與生活任務，陪伴孩子養成自律儲蓄與智慧消費好習慣！",
+      image: "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?auto=format&fit=crop&q=80&w=800",
+      tags: ["每月扣款", "隨時觀看", "課後任務"],
+      duration: "每月 4 堂影音 + 生活實踐任務",
+      details: "不限時間地點，專為學童打造的啟蒙理財動畫課。內容涵蓋貨幣歷史、零用錢管理三罐法、家庭預算小幫手等主題，每週搭配趣味互動任務，由助教線上鼓勵與指導。"
     },
     {
       id: "on-2",
       type: "online",
-      title: "【線上月訂閱】Scratch + AI 幼兒趣味遊戲程式班",
+      title: "【線上月訂閱】小小管家智慧記帳與未來財商思維班",
       category: "線上訂閱",
       price: 799,
-      description: "從零開始學 Scratch 遊戲開發，導入電腦視覺與語音辨識外掛，在家也能成為小工程師！",
-      image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800",
+      description: "從日常記帳工具操作到數位支付觀念，結合線上互動社群，培育未來數位金融競爭力！",
+      image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=800",
       tags: ["每月扣款", "專屬社群", "直播 Q&A"],
       duration: "每月 4 堂教學 + 每週線上答疑",
-      details: "透過生動有趣的闖關模式，學習變數、迴圈、條件式等核心程式邏輯，結合攝影機辨識手勢玩自製遊戲！"
+      details: "結合專屬小管家數位記帳系統與生活案例剖析，建立資產與負債概念、防範詐騙知識及現代數位消費觀念，每月舉辦線上互動工作坊解答學童疑惑。"
     }
   ]
 };
