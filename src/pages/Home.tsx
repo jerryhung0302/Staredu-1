@@ -1,0 +1,212 @@
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Course, AppConfig } from '../types';
+import CourseCard from '../components/CourseCard';
+import { formatImageUrl } from '../utils/imageUtils';
+import { Sparkles, Users, MonitorPlay, ChevronLeft, ChevronRight, Award, ShieldCheck, HeartHandshake, Lightbulb } from 'lucide-react';
+
+export default function Home() {
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [config, setConfig] = useState<AppConfig | null>(null);
+  const [currentBannerIdx, setCurrentBannerIdx] = useState(0);
+
+  useEffect(() => {
+    fetch('/api/courses')
+      .then((res) => res.json())
+      .then((data) => setCourses(data))
+      .catch(console.error);
+
+    fetch('/api/config')
+      .then((res) => res.json())
+      .then((data) => setConfig(data))
+      .catch(console.error);
+  }, []);
+
+  const banners = config?.homeBanners?.length
+    ? config.homeBanners
+    : ['https://images.unsplash.com/photo-1579621970588-a35d0e7ab9b6?auto=format&fit=crop&q=80&w=1600'];
+
+  useEffect(() => {
+    if (banners.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentBannerIdx((prev) => (prev + 1) % banners.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [banners]);
+
+  const physicalCourses = courses.filter((c) => c.type === 'physical').slice(0, 3);
+  const onlineCourses = courses.filter((c) => c.type === 'online').slice(0, 3);
+
+  return (
+    <div className="space-y-16 pb-20">
+      {/* Hero Carousel */}
+      <div className="relative w-full aspect-21/9 md:aspect-24/9 max-h-[520px] overflow-hidden bg-slate-900 shadow-lg">
+        {banners.map((imgUrl, idx) => (
+          <div
+            key={idx}
+            className={`absolute inset-0 transition-opacity duration-1000 ${
+              idx === currentBannerIdx ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+          >
+            <img
+              src={formatImageUrl(imgUrl)}
+              alt={`Banner ${idx + 1}`}
+              className="w-full h-full object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-slate-900/30 to-transparent flex items-end">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 sm:pb-14 w-full">
+                <div className="max-w-2xl space-y-3">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/90 text-white backdrop-blur-md">
+                    <Sparkles className="w-3.5 h-3.5" /> 啟發孩子的未來競爭力
+                  </span>
+                  <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
+                    專為學童打造的 <br className="hidden sm:inline" />
+                    <span className="text-transparent bg-clip-text bg-linear-to-r from-amber-400 to-orange-400">
+                      AI 科技與創意探索殿堂
+                    </span>
+                  </h1>
+                  <p className="text-slate-200 text-sm sm:text-base line-clamp-2">
+                    結合實體營隊互動、創客手作與線上自主學習，引領孩子掌握科技工具，快樂激發創造力。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {/* Carousel Controls */}
+        {banners.length > 1 && (
+          <>
+            <button
+              onClick={() => setCurrentBannerIdx((prev) => (prev === 0 ? banners.length - 1 : prev - 1))}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-md transition-all"
+              aria-label="Previous banner"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <button
+              onClick={() => setCurrentBannerIdx((prev) => (prev + 1) % banners.length)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-md transition-all"
+              aria-label="Next banner"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+              {banners.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentBannerIdx(idx)}
+                  className={`w-2.5 h-2.5 rounded-full transition-all ${
+                    idx === currentBannerIdx ? 'bg-amber-400 w-8' : 'bg-white/50'
+                  }`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Core Advantages */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+              <Lightbulb className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="font-bold text-slate-900">啟發式 AI 教學</h3>
+              <p className="text-xs text-slate-500 mt-1">從應用出發，讓孩子學會把 AI 當成創作助手而非取代思考。</p>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+              <Award className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="font-bold text-slate-900">實戰作品產出</h3>
+              <p className="text-xs text-slate-500 mt-1">每堂課程皆能產出專屬手作、程式小遊戲或原創動畫繪本。</p>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+              <HeartHandshake className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="font-bold text-slate-900">雙師小班制度</h3>
+              <p className="text-xs text-slate-500 mt-1">實體營隊每班配置專業講師與助教，全程細心關照學員進度。</p>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="font-bold text-slate-900">安心安全環境</h3>
+              <p className="text-xs text-slate-500 mt-1">高規格教學場地，配有專屬數位平台與家長課後學習反饋。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Featured Physical Courses */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 text-amber-600 font-bold text-sm">
+              <Users className="w-4 h-4" />
+              <span>實體互動體驗</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
+              熱門實體營隊與週末工作坊
+            </h2>
+          </div>
+          <Link
+            to="/physical-courses"
+            className="text-sm font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1 group"
+          >
+            查看全部實體課程
+            <span className="group-hover:translate-x-1 transition-transform">→</span>
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {physicalCourses.map((course) => (
+            <CourseCard key={course.id} course={course} />
+          ))}
+        </div>
+      </div>
+
+      {/* Featured Online Subscriptions */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 text-amber-600 font-bold text-sm">
+              <MonitorPlay className="w-4 h-4" />
+              <span>在家隨選隨學</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
+              線上訂閱暢學專區
+            </h2>
+          </div>
+          <Link
+            to="/online-courses"
+            className="text-sm font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1 group"
+          >
+            查看全部線上課程
+            <span className="group-hover:translate-x-1 transition-transform">→</span>
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {onlineCourses.map((course) => (
+            <CourseCard key={course.id} course={course} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
