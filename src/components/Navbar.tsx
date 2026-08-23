@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, MonitorPlay, Users, Settings } from 'lucide-react';
+import { Menu, X, MonitorPlay, Users } from 'lucide-react';
 import BrandLogo from './BrandLogo';
 
 export default function Navbar() {
@@ -11,7 +11,6 @@ export default function Navbar() {
     { name: '首頁', path: '/' },
     { name: '實體營隊 / 課程', path: '/physical-courses', icon: Users },
     { name: '線上訂閱課程', path: '/online-courses', icon: MonitorPlay },
-    { name: '後台管理', path: '/admin', icon: Settings },
   ];
 
   const isActive = (path: string) => location.pathname === path;

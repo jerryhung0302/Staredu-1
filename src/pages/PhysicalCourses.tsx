@@ -35,27 +35,12 @@ export default function PhysicalCourses() {
   return (
     <div className="space-y-12 pb-20">
       {/* Top Banner */}
-      <div className="relative h-64 md:h-80 w-full overflow-hidden bg-slate-900">
+      <div className="relative aspect-21/9 md:aspect-24/9 max-h-[360px] w-full overflow-hidden bg-slate-900 shadow-md">
         <img
           src={formatImageUrl(bannerImg)}
           alt="實體營隊 Banner"
-          className="w-full h-full object-cover opacity-60"
+          className="w-full h-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-linear-to-r from-slate-950/80 via-slate-900/50 to-transparent flex items-center">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <div className="max-w-xl space-y-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-amber-500 text-white">
-                <Users className="w-3.5 h-3.5" /> 實體互動學習
-              </div>
-              <h1 className="text-3xl sm:text-4xl font-black text-white">
-                實體營隊與常態班
-              </h1>
-              <p className="text-slate-200 text-sm sm:text-base">
-                在專業師資與同儕互動中動手實作，從積木創客到 AI 動畫，激發孩子無限潛能。
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Main Content Area */}

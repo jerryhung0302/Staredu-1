@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Course, AppConfig } from '../types';
 import CourseCard from '../components/CourseCard';
 import { formatImageUrl } from '../utils/imageUtils';
-import { Sparkles, Users, MonitorPlay, ChevronLeft, ChevronRight, Award, ShieldCheck, HeartHandshake, Lightbulb } from 'lucide-react';
+import { Users, MonitorPlay, ChevronLeft, ChevronRight, Award, ShieldCheck, HeartHandshake, Lightbulb } from 'lucide-react';
 
 export default function Home() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -53,24 +53,6 @@ export default function Home() {
               alt={`Banner ${idx + 1}`}
               className="w-full h-full object-cover object-center"
             />
-            <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-slate-900/30 to-transparent flex items-end">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 sm:pb-14 w-full">
-                <div className="max-w-2xl space-y-3">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/90 text-white backdrop-blur-md">
-                    <Sparkles className="w-3.5 h-3.5" /> 啟發孩子的未來競爭力
-                  </span>
-                  <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
-                    專為學童打造的 <br className="hidden sm:inline" />
-                    <span className="text-transparent bg-clip-text bg-linear-to-r from-amber-400 to-orange-400">
-                      AI 科技與創意探索殿堂
-                    </span>
-                  </h1>
-                  <p className="text-slate-200 text-sm sm:text-base line-clamp-2">
-                    結合實體營隊互動、創客手作與線上自主學習，引領孩子掌握科技工具，快樂激發創造力。
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
         ))}
 

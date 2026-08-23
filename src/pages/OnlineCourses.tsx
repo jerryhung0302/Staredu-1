@@ -35,27 +35,12 @@ export default function OnlineCourses() {
   return (
     <div className="space-y-12 pb-20">
       {/* Top Banner */}
-      <div className="relative h-64 md:h-80 w-full overflow-hidden bg-slate-900">
+      <div className="relative aspect-21/9 md:aspect-24/9 max-h-[360px] w-full overflow-hidden bg-slate-900 shadow-md">
         <img
           src={formatImageUrl(bannerImg)}
           alt="線上訂閱課程 Banner"
-          className="w-full h-full object-cover opacity-60"
+          className="w-full h-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-linear-to-r from-slate-950/80 via-slate-900/50 to-transparent flex items-center">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <div className="max-w-xl space-y-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-orange-500 text-white">
-                <MonitorPlay className="w-3.5 h-3.5" /> 雲端彈性訂閱
-              </div>
-              <h1 className="text-3xl sm:text-4xl font-black text-white">
-                線上月訂閱專區
-              </h1>
-              <p className="text-slate-200 text-sm sm:text-base">
-                不限時間地點，每週定時更新主題。孩子自主學程式、AI 故事與數位藝術，隨時反覆觀看。
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Subscription Value Proposition */}
